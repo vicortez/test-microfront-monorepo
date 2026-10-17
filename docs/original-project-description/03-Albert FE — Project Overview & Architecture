@@ -1,0 +1,252 @@
+# Albert FE — Project Overview & Architecture
+
+> **Purpose:** This document describes the Albert frontend project at a high level, focusing on its architecture, runtime behavior, and key files. It is intended to be read by a refactoring engineer who needs to programmatically verify that the project continues to work after each change.
+
+---
+
+## 1. What This Project Is
+
+Albert FE is a **React 18 monorepo of micro frontends (MFs)** built with Vite and the Vite-native **Module Federation** plugin (`@module-federation/vite`). The project serves a single browser application that consists of multiple independently deployable frontend units.
+
+The project is managed with **npm workspaces** — there is a root `package.json` that defines workspaces `packages/*` and `apps/*`, and every subfolder is an independent Node package.
+
+---
+
+## 2. High-Level Architecture
+
+The architecture is an **Application Shell (host)** that loads **micro frontends at runtime** via Module Federation.
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                         Browser                              │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │   host (shell)  — port 5000                          │   │
+│  │   ┌──────────┐   ┌────────────────────────────────┐  │   │
+│  │   │ Sidebar  │   │ <main>                         │  │   │
+│  │   │ (host)   │   │ ┌──────────────────────────┐  │  │   │
+│  │   │          │   │ │ mf-causes — port 5001      │  │  │   │
+│  │   │          │   │ │ (loaded at runtime via MF) │  │  │   │
+│  │   └──────────┘   │ └──────────────────────────┘  │  │   │
+│  │                  └────────────────────────────────┘  │   │
+│  └──────────────────────────────────────────────────────┘   │
+│                                                              │
+│  Shared packages consumed at build time (npm workspaces)     │
+│  @albert-fe/ui-kit  @albert-fe/logs  @albert-fe/api-client │
+└──────────────────────────────────────────────────────────────┘
+```
+
+### Key Principles
+
+- **Host = shell only**: The host app contains routing (`react-router-dom`), a sidebar, auth context, permissions context, and the layout container. All business logic lives inside MFs.
+- **MFs are independently buildable**: Each micro frontend has its own `vite.config.js`, `package.json`, and build output in `dist/`.
+- **Shared dependencies are deduplicated**: `react` and `react-dom` are declared `singleton: true` in the Module Federation `shared` config so only one instance exists across the runtime.
+
+---
+
+## 3. Apps & Their Roles
+
+### 3.1 Host (`apps/host/`)
+
+- **Port in dev**: 5000
+- **Role**: Application shell. Handles:
+  - `react-router-dom` routing (`BrowserRouter`)
+  - Authentication via Keycloak (`AuthContext`)
+  - Permission-based sidebar navigation (`PermissionsContext`)
+  - Dynamic loading of remote micro frontends via Module Federation
+- **Has test setup**: yes (`vitest.config.js`, `src/test/setup.js`)
+- **Builds to**: `apps/host/dist/`
+- **Entry**: `index.html` → `src/main.jsx`
+
+### 3.2 MF Causes (`apps/mf-causes/`)
+
+- **Port in dev**: 5001
+- **Role**: A micro frontend that manages "Cases" (a business-domain feature). It exposes two components via Module Federation:
+  - `./Component` → `src/Component.jsx` (the main page content rendered in the `<main>` area)
+  - `./SidebarPanel` → `src/SidebarPanel.jsx` (the sidebar panel rendered inside the host sidebar)
+- **Has test setup**: yes (`vitest.config.js`, `src/test/setup.js`)
+- **Builds to**: `apps/mf-causes/dist/`
+- **Entry**: `index.html` → `src/main.jsx` (standalone mode only)
+- **Special note**: Has a `casesStore.js` using `useSyncExternalStore` for shared state, and `cases/useCases.js` hook.
+
+### 3.3 Exemple Components (`apps/exemple-components/`)
+
+- **Port in dev**: 5002
+- **Role**: A **showcase/playground app** for the UI Kit. It is **not** a micro frontend and is consumed by nobody. It just renders all `ui-kit` components on one page so developers can see and interact with them.
+- **Has test setup**: no
+- **Builds to**: not relevant (dev-only)
+- **Entry**: `index.html` → `src/main.jsx`
+
+---
+
+## 4. Shared Packages (`packages/`)
+
+These are consumed internally via npm workspaces (`@albert-fe/*`). They are **not** published to npm; the workspace symlinks make them available.
+
+### 4.1 `@albert-fe/ui-kit`
+
+- **Role**: Shared **design system** (React components + CSS tokens).
+- **Has tests**: yes (vitest + jsdom + testing-library)
+- **Build**: the `build` script is a no-op — it prints a message and exits. The package is **consumed as source** by all apps. This is intentional.
+- **Entry**: `src/index.js` (barrel file that re-exports all components)
+- **CSS**: `src/styles/base.css` defines CSS custom properties (design tokens) and is imported at the top of `src/index.js`, meaning consuming apps get the tokens automatically when they import any component.
+
+### 4.2 `@albert-fe/logs`
+
+- **Role**: Minimal logging utility. Exports `createLogger(scope)` and a default `logger`.
+- **Has tests**: yes (vitest, node environment)
+- **Build**: none needed (pure JS module)
+- **Entry**: `src/index.js`
+- **Note**: `createLogger` wraps `console` methods with a `[albert-fe][scope] timestamp — message` prefix.
+
+### 4.3 `@albert-fe/api-client`
+
+- **Role**: Shared HTTP client + Keycloak auth + API services.
+- **Has tests**: yes (vitest, node environment)
+- **Build**: none needed (pure JS module)
+- **Entry**: `src/index.js` (barrel file)
+- **Key modules**:
+  - `HttpClient.js`: generic HTTP class using native `fetch`
+  - `ApiService.js`: thin wrapper over `HttpClient` with an auth interceptor
+  - `auth/keycloakService.js`: Keycloak initialization, token management, auto-refresh
+  - `auth/sessionStorage.js`: sessionStorage helpers for tokens
+  - `interceptors/authInterceptor.js`: injects Bearer tokens into requests
+  - `services/cases/CasesService.js`: API calls for cases
+  - `services/permissions/PermissionsService.js`: API calls for permissions
+  - `errors/ApiError.js`: custom error class
+
+---
+
+## 5. Module Federation Configuration
+
+### 5.1 Host (`apps/host/vite.config.js`)
+
+The host **consumes** remotes. The `federation()` plugin is configured with:
+
+```
+name: 'host'
+dts: false
+remotes: {
+  mfCauses: {
+    name: 'mfCauses',
+    entry: env.VITE_MF_CAUSES_URL,  // from .env files
+    type: 'module',
+  },
+  mfRegulatory: {
+    name: 'mfRegulatory',
+    entry: env.VITE_MF_REGULATORY_URL,
+    type: 'module',
+  },
+}
+shared: {
+  react: { singleton: true, requiredVersion: '^18.0.0' },
+  'react-dom': { singleton: true, requiredVersion: '^18.0.0' },
+  '@albert-fe/api-client': { singleton: true },
+  '@albert-fe/logs': { singleton: true },
+}
+```
+
+The remote URLs come from environment variables. The `envDir` points to the **project root** (two directories up), so `.env`, `.env.development`, `.env.local`, etc. are shared across all apps.
+
+### 5.2 MF Causes (`apps/mf-causes/vite.config.js`)
+
+The MF **exposes** components:
+
+```
+name: 'mfCauses'
+dts: false
+filename: 'assets/remoteEntry.js'
+exposes: {
+  './Component': './src/Component.jsx',
+  './SidebarPanel': './src/SidebarPanel.jsx',
+}
+shared: { same as host }
+```
+
+The `filename` is `assets/remoteEntry.js`, so the host expects the entry at `http://host:5001/assets/remoteEntry.js`.
+
+### 5.3 Build Targets
+
+Both configs set:
+
+- `build.target: 'esnext'`
+- `build.minify: false`
+- `build.cssCodeSplit: false`
+- `build.modulePreload: false`
+
+These settings are required for Module Federation runtime loading to work correctly.
+
+---
+
+## 6. Routing & Micro Frontend Registry
+
+The host defines all routes in `apps/host/src/mf-registry.jsx`. This is a **central registry** of loaded micro frontends:
+
+- Each MF entry defines: `key`, `labelKey`, `path`, `icon` (JSX element), `component` (React.lazy), and `sidebarPanel` (React.lazy).
+- The `component` and `sidebarPanel` use `React.lazy(() => import('mfCauses/Component').catch(...))`.
+- `App.jsx` maps over `MF_REGISTRY` to generate `<Route>` elements.
+- Routes are prefixed with `/app/`, for example `/app/causes` and `/app/regulatory`.
+- A fallback route redirects to the first MF's path if no route matches.
+
+---
+
+## 7. Authentication Flow
+
+1. **Keycloak** is initialized on app load via `initKeycloak()` from `@albert-fe/api-client`.
+2. The `AuthContext` wraps the app tree and manages `isAuthenticated`, `user`, `token`, and `error` state.
+3. **Token auto-refresh** is handled inside `keycloakService.js` using `kc.onTokenExpired`.
+4. The `authInterceptor` (in `api-client`) injects the Bearer token into every HTTP request.
+5. A **dev session** utility (`devSession.js`) allows standalone development without Keycloak by seeding a fake token into `sessionStorage`.
+
+---
+
+## 8. Environment Variables
+
+All env files live at the **project root**. Variables prefixed with `VITE_` are exposed to the frontend. Key variables:
+
+| Variable                     | Purpose                                  |
+| ---------------------------- | ---------------------------------------- |
+| `VITE_MF_CAUSES_URL`         | URL to the mf-causes `remoteEntry.js`    |
+| `VITE_MF_REGULATORY_URL`     | URL to the mfRegulatory `remoteEntry.js` |
+| `VITE_API_URL`               | Backend-for-Frontend base URL            |
+| `VITE_KEYCLOAK_URL`          | Keycloak server URL                      |
+| `VITE_KEYCLOAK_REALM`        | Keycloak realm                           |
+| `VITE_KEYCLOAK_CLIENT_ID`    | Keycloak client ID                       |
+| `BFF_TARGET`                 | Vite proxy target in dev mode            |
+| `VITE_PREVIEW_ALLOWED_HOSTS` | Allows external hosts in preview mode    |
+
+Files (in precedence order):
+
+1. `.env` (defaults, committed)
+2. `.env.development` / `.env.staging` / `.env.production` (committed)
+3. `.env.local` / `.env.[mode].local` (gitignored, dev overrides)
+
+---
+
+## 9. Docker / Deployment
+
+The project includes a **multi-stage Dockerfile** (`Dockerfile` in the repo root):
+
+1. **deps stage**: `npm ci` installs dependencies from root + all workspace `package.json`s.
+2. **builder stage**: runs `npm run build:mf-causes && npm run build:host`.
+3. **runner stage**: copies built `dist/` folders and preview config, then runs `npm run preview:host`.
+
+The Docker image is based on `harbor.group.intra/atp/base-images/node-24:1.0.0-alfa2`.
+
+An `inject-env.js` script exists in `scripts/` and a `docker-entrypoint.sh` is used for runtime env injection.
+
+---
+
+## 10. Important Files to Know
+
+| File                               | Why it matters                                                       |
+| ---------------------------------- | -------------------------------------------------------------------- |
+| `package.json` (root)              | Defines npm workspaces and root-level scripts                        |
+| `apps/host/vite.config.js`         | Module Federation host config — defines remotes and shared deps      |
+| `apps/mf-causes/vite.config.js`    | Module Federation remote config — defines exposed components         |
+| `apps/host/src/mf-registry.jsx`    | Central MF registry — if new MFs are added, they go here             |
+| `apps/host/src/App.jsx`            | Root routing component                                               |
+| `apps/host/src/main.jsx`           | React root mount point                                               |
+| `apps/mf-causes/src/Component.jsx` | Main exposed component for the Causes MF                             |
+| `packages/ui-kit/src/index.js`     | Barrel export of all UI kit components                               |
+| `packages/api-client/src/index.js` | Barrel export of all API client modules                              |
+| `utils/environmentVariables.js`    | Unified env variable resolver (`window.__ENV__` → `import.meta.env`) |

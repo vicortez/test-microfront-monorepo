@@ -1,0 +1,19 @@
+@import 'tailwindcss';
+@import '@albert-fe/ui-kit/styles/tokens.css';
+@import '@albert-fe/ui-kit/styles/theme.css';
+
+/* Explicitly scan workspace UI Kit source */
+@source "../../../packages/ui-kit/src";
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, sans-serif;
+}

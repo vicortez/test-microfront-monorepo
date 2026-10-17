@@ -1,0 +1,6 @@
+@import 'tailwindcss/utilities';
+@import '@albert-fe/ui-kit/styles/tokens.css';
+@import '@albert-fe/ui-kit/styles/theme.css';
+
+/* Explicitly scan workspace UI Kit source */
+@source "../../../packages/ui-kit/src";

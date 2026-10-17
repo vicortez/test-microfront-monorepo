@@ -1,0 +1,40 @@
+{
+  "name": "test-microfront-monorepo",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "dev": "concurrently -k -p \"[{name}]\" -n \"host,dashboard,chat\" -c \"cyan,magenta,yellow\" \"npm run dev -w apps/host\" \"npm run dev -w apps/mf-dashboard\" \"npm run dev -w apps/mf-chat\"",
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces",
+    "typecheck": "npm run typecheck --workspaces",
+    "lint": "oxlint --deny-warnings",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "e2e": "playwright test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "prettier": {
+    "singleQuote": true,
+    "semi": false
+  },
+  "overrides": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@babel/runtime": "^8.0.7",
+    "@playwright/test": "^1.64.1",
+    "concurrently": "^10.0.6",
+    "oxlint": "^1.88.0",
+    "prettier": "^3.9.10",
+    "react-refresh": "^0.19.0",
+    "wait-on": "^9.5.1"
+  }
+}

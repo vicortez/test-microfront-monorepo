@@ -1,0 +1,1 @@
+- Always use native terminal commands when available instead of manually editing files, like when adding a dependency or initializing an npm repository

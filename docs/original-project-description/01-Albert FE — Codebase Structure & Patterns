@@ -1,0 +1,421 @@
+# Albert FE — Codebase Structure & Patterns
+
+> **Purpose:** This document describes the folder layout, naming conventions, component patterns, state management, auth, i18n, and integration details. It includes real file examples.
+
+---
+
+## 1. Top-Level Folder Structure
+
+```
+onboarding-ui/
+├── .env                      # Base env variables
+├── .env.development          # Dev overrides
+├── .env.production           # Production overrides
+├── .env.staging              # Staging overrides
+├── .env.test                 # Test overrides
+├── .env.example              # Template for new devs
+├── .env.local                # Local dev overrides (gitignored)
+├── package.json              # Root workspace manifest
+├── package-lock.json         # Lockfile
+├── Dockerfile                # Multi-stage Docker build
+├── docker-entrypoint.sh     # Docker runtime script
+├── .npmrc                    # npm registry config (if any)
+├── .gitignore
+├── .vscode/                  # VS Code settings
+├── .idea/                    # JetBrains IDE settings
+├── apps/
+│   ├── exemple-components/   # UI Kit showcase (dev-only)
+│   ├── host/                 # Application shell
+│   └── mf-causes/            # Cases micro frontend
+├── packages/
+│   ├── api-client/           # HTTP + auth + services
+│   ├── logs/                 # Logging utility
+│   └── ui-kit/               # Design system (consumed as source)
+├── scripts/
+│   ├── inject-env.js
+│   ├── screenshot.mjs
+│   └── validate.mjs
+├── utils/
+│   └── environmentVariables.js
+└── docs/
+    ├── ARCHITECTURE.md
+    └── (other docs)
+```
+
+---
+
+## 2. App Folder Structures
+
+### 2.1 Host (`apps/host/`)
+
+```
+apps/host/
+├── index.html                # HTML entry point
+├── styles.css                # Global styles (html/body resets)
+├── package.json
+├── vite.config.js
+├── vitest.config.js
+└── src/
+    ├── main.jsx              # React root mount
+    ├── App.jsx               # Router + route guards (PrivateRoute/PublicRoute)
+    ├── mf-registry.jsx       # Central MF registry mapping paths -> lazy components
+    ├── i18n.js               # i18next instance (English only today)
+    ├── test/
+    │   └── setup.js          # Vitest cleanup
+    ├── locales/
+    │   └── en/
+    │       └── text.json     # Translation strings
+    ├── contexts/
+    │   ├── AuthContext.jsx   # Keycloak auth state, login/logout
+    │   └── PermissionsContext.jsx # Fetches and caches menu permissions
+    ├── components/
+    │   ├── Container/
+    │   │   ├── Container.jsx
+    │   │   └── Container.module.css
+    │   ├── Sidebar/
+    │   │   ├── Sidebar.jsx   # Navigation rail + collapsible panel
+    │   │   ├── Sidebar.module.css
+    │   │   └── NavItem.jsx
+    │   ├── UserMenu/
+    │   │   └── UserMenu.jsx
+    │   └── (other layout comps)
+    └── pages/
+        └── LoginPage/
+            ├── LoginPage.jsx
+            └── LoginPage.module.css
+```
+
+### 2.2 MF Causes (`apps/mf-causes/`)
+
+```
+apps/mf-causes/
+├── index.html                # Standalone entry (dev mode only)
+├── package.json
+├── vite.config.js
+├── vitest.config.js
+└── src/
+    ├── main.jsx              # Standalone root mount (seeds dev session)
+    ├── Component.jsx         # Main exposed component (rendered in host <main>)
+    ├── Component.module.css
+    ├── SidebarPanel.jsx      # Exposed sidebar panel (rendered inside host Sidebar)
+    ├── SidebarPanel.module.css
+    ├── i18n.js               # Per-MF i18next instance
+    ├── test/
+    │   └── setup.js          # Vitest cleanup + jest-dom matchers
+    ├── locales/
+    │   └── en/
+    │       └── text.json
+    ├── cases/
+    │   ├── useCases.js       # React hook: useSyncExternalStore + loadCases
+    │   ├── casesStore.js     # External store for case data (shared by Component + SidebarPanel)
+    │   └── (other case logic)
+    ├── contexts/
+    │   └── ToastContext.jsx  # Per-MF toast notifications
+    ├── components/
+    │   ├── CaseDashboard/
+    │   │   ├── CaseDashboard.jsx
+    │   │   ├── CaseDashboard.module.css
+    │   │   └── CaseDashboard.test.jsx
+    │   ├── CaseGrid/
+    │   ├── CaseList/
+    │   ├── NewCaseForm/
+    │   ├── CaseGridCard/
+    │   ├── CaseListItem/
+    │   ├── CaseCardContextMenu/
+    │   ├── CaseItemMenu/
+    │   └── SectionLabel/
+    ├── util/
+    │   ├── CaseStatusUtil.js
+    │   └── dateUtils.js
+    └── types/
+        └── globals/
+```
+
+### 2.3 Example Components (`apps/exemple-components/`)
+
+```
+apps/exemple-components/
+├── index.html
+├── package.json
+├── vite.config.js
+└── src/
+    ├── main.jsx
+    ├── App.jsx               # Single-page component gallery
+    ├── App.module.css
+    └── global.css
+```
+
+---
+
+## 3. Shared Package Folder Structures
+
+### 3.1 UI Kit (`packages/ui-kit/`)
+
+```
+packages/ui-kit/
+├── package.json
+├── vitest.config.js
+└── src/
+    ├── index.js              # Barrel export: every component re-exported here
+    ├── test/
+    │   └── setup.js
+    ├── styles/
+    │   ├── base.css          # CSS custom properties (design tokens)
+    │   └── base.module.css   # Shared utility classes (if any)
+    ├── Avatar/
+    │   ├── Avatar.jsx
+    │   ├── Avatar.module.css
+    │   └── Avatar.test.jsx
+    ├── Button/
+    │   ├── Button.jsx
+    │   ├── Button.module.css
+    │   └── Button.test.jsx
+    ├── Card/
+    ├── FileUpload/
+    ├── IconButton/
+    ├── Icons/
+    │   ├── Icons.jsx
+    │   ├── Icons.module.css
+    │   └── Icons.test.jsx
+    ├── Modal/
+    ├── SearchInput/
+    ├── Select/
+    ├── Tag/
+    ├── TextBox/
+    │   ├── TextBox.jsx
+    │   ├── TextBox.module.css
+    │   └── TextBox.test.jsx
+    ├── Toast/
+    │   ├── Toast.jsx
+    │   ├── ToastContainer.jsx
+    │   ├── Toast.module.css
+    │   └── Toast.test.jsx
+    └── Tooltip/
+```
+
+### 3.2 API Client (`packages/api-client/`)
+
+```
+packages/api-client/
+├── package.json
+├── vitest.config.js
+└── src/
+    ├── index.js              # Barrel export
+    ├── test/
+    │   └── setup.js
+    ├── ApiService.js         # High-level service wrapper (GET/POST/PUT/PATCH/DELETE)
+    ├── ApiService.test.js
+    ├── HttpClient.js         # Low-level fetch wrapper with interceptors + timeout
+    ├── HttpClient.test.js
+    ├── devSession.js         # Seeds fake session for standalone dev
+    ├── devSession.test.js
+    ├── errors/
+    │   ├── ApiError.js
+    │   └── ApiError.test.js
+    ├── interceptors/
+    │   └── authInterceptor.js
+    ├── auth/
+    │   ├── index.js          # Barrel for auth exports
+    │   ├── keycloakService.js # Keycloak init, login, logout, token refresh
+    │   └── sessionStorage.js  # sessionStorage helper for tokens
+    └── services/
+        ├── cases/
+        │   ├── CasesService.js
+        │   ├── CasesService.test.js
+        │   └── casesMock.js
+        └── permissions/
+            ├── PermissionsService.js
+            └── PermissionsService.test.js
+```
+
+### 3.3 Logs (`packages/logs/`)
+
+```
+packages/logs/
+├── package.json
+├── vitest.config.js
+└── src/
+    ├── index.js              # Barrel export
+    └── baseLogs.js           # createLogger() + default logger
+```
+
+---
+
+## 4. Naming Conventions
+
+| Layer                      | Convention                                      | Example                                                |
+| -------------------------- | ----------------------------------------------- | ------------------------------------------------------ |
+| Components (UI Kit / Apps) | PascalCase folder + `.jsx` file + `.module.css` | `Button/Button.jsx`, `Button.module.css`               |
+| Component index file       | `index.js` or same name as folder               | `src/index.js` (barrel), `Button.jsx` inside `Button/` |
+| Test files                 | `.test.jsx` next to the component               | `Button.test.jsx`                                      |
+| CSS Modules                | `.module.css`                                   | `Button.module.css`                                    |
+| Hooks                      | camelCase, prefixed with `use`                  | `useCases.js`, `useAuth()`                             |
+| Context files              | PascalCase + `Context` suffix                   | `AuthContext.jsx`, `PermissionsContext.jsx`            |
+| Services / utility         | camelCase or PascalCase class                   | `CasesService.js`, `HttpClient.js`, `baseLogs.js`      |
+| Barrel exports             | `index.js` at package root or subfolder         | `src/index.js`, `auth/index.js`                        |
+| Environment util           | `getEnvironmentVariable`                        | `utils/environmentVariables.js`                        |
+
+---
+
+## 5. Component File Pattern (Example: Button)
+
+Every UI Kit component follows this pattern:
+
+1. **Component file**: `Component.jsx`
+   - `React.forwardRef` is used for ref forwarding (e.g., `Button`, `TextBox`, `Toast`)
+   - Props are destructured with defaults inline
+   - CSS class names are built by concatenating `styles.*` classes with an optional external `className`
+
+2. **Styles file**: `Component.module.css`
+   - Uses CSS Modules scoped to the component
+   - References design tokens from `base.css` via CSS custom properties
+   - Uses `[local]` or `[name]__[local]___[hash:base64:5]` depending on environment (test vs production)
+
+3. **Test file**: `Component.test.jsx`
+   - Uses `vitest` (`describe`, `it`, `expect`)
+   - Uses `@testing-library/react` (`render`, `screen`, `fireEvent`)
+   - Uses `@testing-library/jest-dom/vitest` for matchers like `.toBeInTheDocument()`
+   - Tests check rendering, props, state changes, and accessibility
+
+---
+
+## 6. State Management Patterns
+
+### 6.1 Host-Level Auth & Permissions
+
+- **React Contexts** are used:
+  - `AuthContext` — holds `isAuthenticated`, `user`, `token`, `login`, `logout`
+  - `PermissionsContext` — fetches menu permissions from backend, caches in `sessionStorage`
+
+### 6.2 MF-Level Shared State (Cases)
+
+- **External Store** pattern with `useSyncExternalStore`:
+  - `casesStore.js` manages state object, listeners, and async loading with request-deduplication (`hasLoaded`, `inFlight`)
+  - `useCases.js` is a thin hook subscribing to the store
+- This pattern is used because `Component` and `SidebarPanel` are both exposed by the same MF and share a single module instance.
+
+### 6.3 Host-MF Communication
+
+- **Props** are the primary mechanism. The host passes `token`, `user`, `onAuthError`, `onLogout`, `storagePrefix` to chat MF.
+- No Redux, Zustand, or React Context is shared across MFs.
+- `sessionStorage` is used as a lightweight shared bus for tokens and permissions.
+
+---
+
+## 7. CSS & Styling Patterns
+
+### 7.1 Global Design Tokens
+
+`packages/ui-kit/src/styles/base.css` defines `:root` CSS custom properties (colors, fonts, spacing, border-radius). Every app gets these tokens because `ui-kit/src/index.js` imports `base.css` at the top.
+
+### 7.2 CSS Modules
+
+Every component's styles are in `.module.css` files. In test configs, `generateScopedName` is set to `"[local]"` so test selectors can use the raw class names. In production, the hash-based naming is used.
+
+### 7.3 Global Reset
+
+`apps/host/styles.css` contains minimal global resets (`overflow: hidden`, `margin: 0`, `background-color: #ffffff`, and `--sidebar-margin` CSS variable).
+
+### 7.4 LucideProvider
+
+`mf-causes` wraps its tree in `<LucideProvider size={16} strokeWidth={1.75}>` so all `lucide-react` icons share consistent sizing. Icons in `ui-kit` are custom inline SVG components in `packages/ui-kit/src/Icons/Icons.jsx` (not from Lucide).
+
+---
+
+## 8. i18n Pattern
+
+- Each micro frontend has its **own i18next instance** (via `i18next.createInstance()`), initialized with `initReactI18next`.
+- Translation files live at `src/locales/en/text.json` inside each app.
+- Only English (`en`) exists today, but the structure allows adding `locales/<lang>/text.json` files.
+- The host and each MF import and use their own instance, passed explicitly to `useTranslation(undefined, { i18n })`.
+
+---
+
+## 9. Build Outputs
+
+### What gets built:
+
+- `apps/host/dist/` — the host shell (HTML + JS assets)
+- `apps/mf-causes/dist/` — the Causes MF (HTML + JS assets + `assets/remoteEntry.js`)
+- `apps/exemple-components/dist/` — built on demand, but not part of deployment
+
+### What does **NOT** get built:
+
+- `packages/ui-kit/` — consumed as source (no `dist/`)
+- `packages/api-client/` — consumed as source (no `dist/`)
+- `packages/logs/` — consumed as source (no `dist/`)
+
+---
+
+## 10. Docker Build Flow
+
+The Dockerfile defines a 3-stage build:
+
+1. **deps**: copies root + workspace `package.json`s and runs `npm ci --ignore-scripts`
+2. **builder**: copies the full source, then runs `npm run build:mf-causes && npm run build:host`
+3. **runner**: copies the built `dist/` folders, workspace manifests, Vite configs, and preview scripts. Runs `preview:host` on port 5000 by default. Also exposes port 5001 for the MF preview if needed.
+
+The `docker-entrypoint.sh` and `inject-env.js` handle runtime environment variable injection.
+
+---
+
+## 11. Integration Testing (Playwright)
+
+A validation script `scripts/validate.mjs` uses Playwright (`chromium`) to verify:
+
+- The host renders its title (`<h1>`)
+- The sidebar contains expected navigation links ("Home", "Causes")
+- Clicking "Causes" loads the remote micro frontend content (`[data-testid="mf-causes"]`)
+- Interacting with a `TextBox` inside the remote MF updates the UI
+- No console errors or uncaught page errors occur
+
+This script is a good reference for post-refactor automated validation.
+
+---
+
+## 12. Real File Content Examples
+
+### Example: Host Main Entry (`apps/host/src/main.jsx`)
+
+- Imports `react`, `react-dom/client`, `react-router-dom`
+- Imports `@albert-fe/ui-kit` (triggers `base.css` injection)
+- Imports `./i18n`
+- Imports `App`, `AuthProvider`, `PermissionsProvider`
+- Mounts React root into `#root` with `BrowserRouter` wrapping both providers
+
+### Example: MF Causes Exposed Component (`apps/mf-causes/src/Component.jsx`)
+
+- Imports `react`, `react-i18next`
+- Imports from `@albert-fe/ui-kit` (`Card`, `Tag`)
+- Imports local components (`CaseDashboardComponent`)
+- Wraps everything in `<LucideProvider>` and `<ToastProvider>`
+- Exports `Component` as the default entry for Module Federation
+
+### Example: UI Kit Barrel (`packages/ui-kit/src/index.js`)
+
+- First line: `import "./styles/base.css"` (injects tokens)
+- Then re-exports every component in named and default forms:
+  - `export { TextBox, default as TextBoxDefault } from "./TextBox/TextBox"`
+  - `export { Button, default as ButtonDefault } from "./Button/Button"`
+  - And so on for all 15+ components
+
+### Example: API Client Barrel (`packages/api-client/src/index.js`)
+
+- Re-exports `ApiService`, `PermissionsService`, `CasesService`
+- Re-exports all Keycloak functions: `initKeycloak`, `getKeycloak`, `isAuthenticated`, `getToken`, `getUserProfile`, `login`, `logout`, `updateToken`, `saveTokensToSession`, `clearSessionTokens`, `saveUserToSession`, `SESSION_KEYS`
+- Re-exports `seedDevSession`, `HttpClient`, `ApiError`, `authInterceptor`
+
+### Example: `utils/environmentVariables.js`
+
+- A single helper function `getEnvironmentVariable(variableName)`
+- Checks `window.__ENV__` first (for Docker runtime injection)
+- Falls back to `import.meta.env[variableName]` (for Vite dev/build)
+- Returns `null` if not found
+
+---
+
+## 13. Security & Environment Variable Handling
+
+- Environment variables must be prefixed with `VITE_` to be accessible in the browser via `import.meta.env`.
+- A shared `getEnvironmentVariable()` utility in `utils/environmentVariables.js` also checks `window.__ENV__`, which is populated at runtime by `inject-env.js` for dynamic Docker deployments.
+- `keycloakService.js` reads Keycloak config (`URL`, `Realm`, `ClientID`) through this helper and throws if any are missing.
