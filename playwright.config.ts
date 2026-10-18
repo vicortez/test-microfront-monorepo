@@ -34,6 +34,12 @@ export default defineConfig({
       reuseExistingServer: !process.env.CI,
       timeout: 60 * 1000,
     },
+    {
+      command: 'npm run dev -w apps/mf-analytics',
+      url: 'http://localhost:5003',
+      reuseExistingServer: !process.env.CI,
+      timeout: 60 * 1000,
+    },
   ],
   projects: [
     {

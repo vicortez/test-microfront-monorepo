@@ -34,6 +34,9 @@ export default defineConfig({
     federation({
       name: 'host',
       dts: false,
+      dev: {
+        remoteHmr: true,
+      },
       remotes: {
         mfDashboard: {
           name: 'mfDashboard',
@@ -43,6 +46,11 @@ export default defineConfig({
         mfChat: {
           name: 'mfChat',
           entry: 'http://localhost:5002/assets/remoteEntry.js',
+          type: 'module',
+        },
+        mfAnalytics: {
+          name: 'mfAnalytics',
+          entry: 'http://localhost:5003/assets/remoteEntry.js',
           type: 'module',
         },
       },

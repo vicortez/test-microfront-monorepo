@@ -36,6 +36,9 @@ export default defineConfig({
     federation({
       name: 'mfDashboard',
       dts: false,
+      dev: {
+        remoteHmr: true,
+      },
       filename: 'assets/remoteEntry.js',
       exposes: {
         './DashboardWidget': './src/DashboardWidget.tsx',

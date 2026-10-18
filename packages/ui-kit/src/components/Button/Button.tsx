@@ -7,6 +7,7 @@ export const buttonVariants = cva(
   {
     variants: {
       variant: {
+        // default: 'bg-red-500 text-primary-foreground hover:opacity-90',
         default: 'bg-primary text-primary-foreground hover:opacity-90',
         destructive:
           'bg-destructive text-destructive-foreground hover:opacity-90',
@@ -31,15 +32,22 @@ export const buttonVariants = cva(
 
 export interface ButtonProps
   extends
-    React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {}
+  React.ButtonHTMLAttributes<HTMLButtonElement>,
+  VariantProps<typeof buttonVariants> { }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, ...props }, ref) => {
+  ({ className, variant, size, onClick, ...props }, ref) => {
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+      console.log('hi')
+      onClick?.(event)
+    }
+
     return (
       <button
         ref={ref}
+        data-ui-kit-hmr="live-updated"
         className={cn(buttonVariants({ variant, size, className }))}
+        onClick={handleClick}
         {...props}
       />
     )

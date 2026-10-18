@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test'
 
-test('Host renders both mf-dashboard and mf-chat concurrently on the same page', async ({
+test('Host renders mf-dashboard, mf-chat, and mf-analytics concurrently on the same page', async ({
   page,
 }) => {
   const consoleErrors: string[] = []
@@ -30,6 +30,16 @@ test('Host renders both mf-dashboard and mf-chat concurrently on the same page',
   await expect(mfeChat.locator('h2')).toContainText('Live Chat')
   await expect(
     mfeChat.locator('[data-testid="chat-message-bubble"]').first(),
+  ).toBeVisible()
+
+  // Verify Remote 3 (mf-analytics - pure JS, no Tailwind) rendered inside host canvas
+  const mfeAnalytics = page.locator('[data-testid="mfe-analytics-root"]')
+  await expect(mfeAnalytics).toBeVisible()
+  await expect(mfeAnalytics.locator('h2')).toContainText(
+    'Telemetry & Analytics',
+  )
+  await expect(
+    mfeAnalytics.locator('[data-testid="analytics-export-btn"]'),
   ).toBeVisible()
 
   // Verify zero console errors

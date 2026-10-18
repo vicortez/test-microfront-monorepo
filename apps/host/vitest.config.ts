@@ -15,6 +15,10 @@ export default defineConfig({
         __dirname,
         './src/test/mocks/ChatWidget.tsx',
       ),
+      'mfAnalytics/AnalyticsWidget': path.resolve(
+        __dirname,
+        './src/test/mocks/AnalyticsWidget.tsx',
+      ),
     },
   },
   test: {

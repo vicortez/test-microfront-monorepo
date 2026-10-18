@@ -9,6 +9,7 @@ import {
 // Lazy load remote microfrontends via Module Federation
 const DashboardWidget = React.lazy(() => import('mfDashboard/DashboardWidget'))
 const ChatWidget = React.lazy(() => import('mfChat/ChatWidget'))
+const AnalyticsWidget = React.lazy(() => import('mfAnalytics/AnalyticsWidget'))
 
 export default function App() {
   const [theme, setTheme] = React.useState('default')
@@ -29,36 +30,51 @@ export default function App() {
                   Operations Command Center
                 </h2>
                 <p className="text-sm text-muted-foreground mt-0.5">
-                  Host shell validating single-page co-existence of two
-                  independent Vite remotes.
+                  Host shell validating single-page co-existence of three
+                  independent remotes (including vanilla JS remote).
                 </p>
               </div>
             </div>
 
-            {/* Single Page Multi-MFE Canvas: Both remotes mounted concurrently */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-              {/* Remote 1: mf-dashboard (Port 5001) */}
-              <div className="lg:col-span-7">
-                <RemoteErrorBoundary fallbackTitle="Dashboard Remote (Port 5001)">
-                  <React.Suspense
-                    fallback={
-                      <RemoteLoadingFallback title="Dashboard Remote (Port 5001)" />
-                    }
-                  >
-                    <DashboardWidget />
-                  </React.Suspense>
-                </RemoteErrorBoundary>
+            {/* Single Page Multi-MFE Canvas: Three remotes mounted concurrently */}
+            <div className="space-y-8">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                {/* Remote 1: mf-dashboard (Port 5001) */}
+                <div className="lg:col-span-7">
+                  <RemoteErrorBoundary fallbackTitle="Dashboard Remote (Port 5001)">
+                    <React.Suspense
+                      fallback={
+                        <RemoteLoadingFallback title="Dashboard Remote (Port 5001)" />
+                      }
+                    >
+                      <DashboardWidget />
+                    </React.Suspense>
+                  </RemoteErrorBoundary>
+                </div>
+
+                {/* Remote 2: mf-chat (Port 5002) */}
+                <div className="lg:col-span-5">
+                  <RemoteErrorBoundary fallbackTitle="Chat Remote (Port 5002)">
+                    <React.Suspense
+                      fallback={
+                        <RemoteLoadingFallback title="Chat Remote (Port 5002)" />
+                      }
+                    >
+                      <ChatWidget />
+                    </React.Suspense>
+                  </RemoteErrorBoundary>
+                </div>
               </div>
 
-              {/* Remote 2: mf-chat (Port 5002) */}
-              <div className="lg:col-span-5">
-                <RemoteErrorBoundary fallbackTitle="Chat Remote (Port 5002)">
+              {/* Remote 3: mf-analytics (Port 5003 - Pure JS, No Tailwind) */}
+              <div>
+                <RemoteErrorBoundary fallbackTitle="Analytics Remote (Port 5003 - Vanilla JS)">
                   <React.Suspense
                     fallback={
-                      <RemoteLoadingFallback title="Chat Remote (Port 5002)" />
+                      <RemoteLoadingFallback title="Analytics Remote (Port 5003)" />
                     }
                   >
-                    <ChatWidget />
+                    <AnalyticsWidget />
                   </React.Suspense>
                 </RemoteErrorBoundary>
               </div>

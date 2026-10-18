@@ -1,4 +1,10 @@
-@theme {
+/*
+ * `inline` makes utilities emit `hsl(var(--primary))` directly instead of
+ * referencing a :root-resolved `--color-primary`. Without it, overriding
+ * `--primary` on a wrapper (e.g. `.theme-emerald`) does not recolor
+ * descendants, because the color was already computed at :root.
+ */
+@theme inline {
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
   --color-card: hsl(var(--card));

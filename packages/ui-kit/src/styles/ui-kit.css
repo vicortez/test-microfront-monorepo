@@ -1,0 +1,27 @@
+/*
+ * Prebuilt stylesheet for consumers WITHOUT Tailwind (e.g. apps/mf-analytics).
+ * Compiled by @tailwindcss/cli into dist/ui-kit.css.
+ *
+ * - No preflight: the page owner (host or standalone app shell) decides resets.
+ *   Use `@albert-fe/ui-kit/preflight.css` in standalone shells that need one.
+ * - Only classes used by ui-kit components are emitted (tests excluded).
+ * - Same layer names as Tailwind apps, so rules merge cleanly with a
+ *   Tailwind host's own layers instead of fighting them.
+ */
+
+ /* Obs: actually, we do want preflight always. importing from ui-kit means you want preflight since
+  * you're using shadcn components which depend on it. we might want to reestructure these css imports later
+  This doesnt mean preflight needs to happen in ui-kit though. The shell should handle it to have it only once
+  */
+@layer theme, base, components, utilities;
+
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities) source(none);
+
+@import './tokens.css';
+@import './theme.css';
+
+@source '../components';
+@source '../utils';
+@source not '../**/*.test.tsx';
+@source not '../**/*.test.ts';

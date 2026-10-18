@@ -40,4 +40,24 @@ test('CSS specificity and design tokens are computed accurately across MFE bound
 
   expect(cComputed.borderRadius).not.toBe('0px')
   expect(cComputed.backgroundColor).toBeTruthy()
+
+  // Verify Remote 3 (mf-analytics - pure JS, no Tailwind) UI Kit Button receives proper styling
+  const analyticsBtn = page.locator('[data-testid="analytics-export-btn"]')
+  await expect(analyticsBtn).toBeVisible()
+
+  const aBtnComputed = await analyticsBtn.evaluate((el) => {
+    const style = window.getComputedStyle(el)
+    return {
+      borderRadius: style.borderRadius,
+      backgroundColor: style.backgroundColor,
+      color: style.color,
+      display: style.display,
+      cursor: style.cursor,
+    }
+  })
+
+  // Button must receive token-derived border radius and background color
+  expect(aBtnComputed.borderRadius).not.toBe('0px')
+  expect(aBtnComputed.backgroundColor).toBeTruthy()
+  expect(aBtnComputed.display).toContain('flex')
 })

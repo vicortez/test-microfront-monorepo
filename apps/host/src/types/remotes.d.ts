@@ -12,3 +12,9 @@ declare module 'mfChat/ChatWidget' {
   const ChatWidget: React.ComponentType
   export default ChatWidget
 }
+
+declare module 'mfAnalytics/AnalyticsWidget' {
+  import * as React from 'react'
+  const AnalyticsWidget: React.ComponentType
+  export default AnalyticsWidget
+}

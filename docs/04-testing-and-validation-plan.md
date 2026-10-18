@@ -15,7 +15,7 @@ To prove that the modernized Albert stack works without flaws, we must validate 
 
 2. **Isolation & Unit Integrity (Vitest + TypeScript)**:
    - Each package and app can test its components in isolation with `jsdom`.
-   - Components from `packages/ui-kit` render cleanly with Base UI primitives (`@base-ui-components/react`) and Tailwind classes.
+   - Components from `packages/ui-kit` render cleanly with Base UI primitives (`@base-ui/react`) and Tailwind classes.
    - The `cn()` utility properly resolves class precedence and overrides.
    - All tests use TypeScript (`.test.ts`, `.test.tsx`) with `@src/*` absolute imports.
 

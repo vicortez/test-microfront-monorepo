@@ -36,6 +36,9 @@ export default defineConfig({
     federation({
       name: 'mfChat',
       dts: false,
+      dev: {
+        remoteHmr: true,
+      },
       filename: 'assets/remoteEntry.js',
       exposes: {
         './ChatWidget': './src/ChatWidget.tsx',

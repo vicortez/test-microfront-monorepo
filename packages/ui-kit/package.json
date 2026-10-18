@@ -2,20 +2,34 @@
   "name": "@albert-fe/ui-kit",
   "version": "1.0.0",
   "type": "module",
-  "main": "./src/index.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/types/index.d.ts",
   "exports": {
-    ".": "./src/index.ts",
+    ".": {
+      "development": "./src/index.ts",
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./styles/ui-kit.css": "./dist/ui-kit.css",
+    "./styles/preflight.css": "./dist/preflight.css",
+    "./ui-kit.css": "./dist/ui-kit.css",
+    "./preflight.css": "./dist/preflight.css",
     "./styles/*": "./src/styles/*"
   },
   "scripts": {
-    "build": "node -e \"console.log('@albert-fe/ui-kit is consumed as workspace source (no bundling needed)')\"",
+    "dev": "tailwindcss -i ./src/styles/ui-kit.css -o ./dist/ui-kit.css --watch=always",
+    "build": "tsc -b && vite build && tailwindcss -i ./src/styles/ui-kit.css -o ./dist/ui-kit.css && tailwindcss -i ./src/styles/preflight.css -o ./dist/preflight.css",
     "test": "vitest run",
     "typecheck": "tsc -b"
   },
   "dependencies": {
+    "@base-ui/react": "^1.9.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.47.0",
+    "shadcn": "^4.22.0",
     "tailwind-merge": "^2.5.4"
   },
   "peerDependencies": {
@@ -23,6 +37,7 @@
     "react-dom": "^18.2.0 || ^18.3.0"
   },
   "devDependencies": {
+    "@tailwindcss/cli": "^4.3.3",
     "@tailwindcss/vite": "^4.0.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^14.3.1",
@@ -35,6 +50,7 @@
     "react-dom": "^18.3.1",
     "tailwindcss": "^4.0.0",
     "typescript": "^5.6.3",
+    "vite": "^5.4.21",
     "vitest": "^2.1.8"
   }
 }

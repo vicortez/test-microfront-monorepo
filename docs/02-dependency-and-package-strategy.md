@@ -80,28 +80,28 @@ To adhere to the principle of having **no extra common config files** at the roo
 
 Self-contained design system package.
 
-| Package                     | Classification     | Version                    | Architectural Justification                                                               |
-| :-------------------------- | :----------------- | :------------------------- | :---------------------------------------------------------------------------------------- |
-| `react`                     | `peerDependencies` | `^18.2.0 \|\| ^18.3.0`     | **CRITICAL:** UI Kit must NOT bundle React. Consuming apps supply the React 18 singleton. |
-| `react-dom`                 | `peerDependencies` | `^18.2.0 \|\| ^18.3.0`     | Must match `react` peer dependency.                                                       |
-| `@base-ui-components/react` | `dependencies`     | `^1.0.0-alpha.x` or latest | Unstyled component primitives (dialog, tooltip, popover). Consumed at runtime.            |
-| `clsx`                      | `dependencies`     | `^2.1.1`                   | Lightweight utility for constructing conditional className strings.                       |
-| `tailwind-merge`            | `dependencies`     | `^2.5.4`                   | Intelligently merges Tailwind CSS classes without style conflicts.                        |
-| `class-variance-authority`  | `dependencies`     | `^0.7.1`                   | Manages variant-based styling (e.g. button sizes, colors) in shadcn pattern.              |
-| `lucide-react`              | `dependencies`     | `^1.47.0`                  | Consistent UI icon set.                                                                   |
-| `typescript`                | `devDependencies`  | `^5.6.3`                   | Self-contained package type checking.                                                     |
-| `@types/react`              | `devDependencies`  | `^18.3.12`                 | React 18 type definitions.                                                                |
-| `@types/react-dom`          | `devDependencies`  | `^18.3.1`                  | React DOM 18 type definitions.                                                            |
-| `@types/node`               | `devDependencies`  | `^22.9.0`                  | Node.js type definitions.                                                                 |
-| `react`                     | `devDependencies`  | `^18.3.1`                  | Required locally only for running isolated Vitest unit tests.                             |
-| `react-dom`                 | `devDependencies`  | `^18.3.1`                  | Required locally for Vitest with jsdom.                                                   |
-| `vitest`                    | `devDependencies`  | `^2.1.8`                   | Test runner for component unit tests.                                                     |
-| `@testing-library/react`    | `devDependencies`  | `^14.3.1`                  | React component test utilities.                                                           |
-| `@testing-library/jest-dom` | `devDependencies`  | `^6.6.3`                   | Matchers for DOM node inspection.                                                         |
-| `jsdom`                     | `devDependencies`  | `^25.0.1`                  | Headless browser DOM environment for Vitest.                                              |
-| `@vitejs/plugin-react`      | `devDependencies`  | `^4.3.4`                   | Vite React plugin for Vitest compilation.                                                 |
-| `@tailwindcss/vite`         | `devDependencies`  | `^4.0.0`                   | Tailwind CSS v4 Vite compiler.                                                            |
-| `tailwindcss`               | `devDependencies`  | `^4.0.0`                   | Tailwind core.                                                                            |
+| Package                     | Classification     | Version                | Architectural Justification                                                               |
+| :-------------------------- | :----------------- | :--------------------- | :---------------------------------------------------------------------------------------- |
+| `react`                     | `peerDependencies` | `^18.2.0 \|\| ^18.3.0` | **CRITICAL:** UI Kit must NOT bundle React. Consuming apps supply the React 18 singleton. |
+| `react-dom`                 | `peerDependencies` | `^18.2.0 \|\| ^18.3.0` | Must match `react` peer dependency.                                                       |
+| `@base-ui/react`            | `dependencies`     | `^1.0.0` or latest     | Unstyled component primitives (dialog, tooltip, popover). Consumed at runtime.            |
+| `clsx`                      | `dependencies`     | `^2.1.1`               | Lightweight utility for constructing conditional className strings.                       |
+| `tailwind-merge`            | `dependencies`     | `^2.5.4`               | Intelligently merges Tailwind CSS classes without style conflicts.                        |
+| `class-variance-authority`  | `dependencies`     | `^0.7.1`               | Manages variant-based styling (e.g. button sizes, colors) in shadcn pattern.              |
+| `lucide-react`              | `dependencies`     | `^1.47.0`              | Consistent UI icon set.                                                                   |
+| `typescript`                | `devDependencies`  | `^5.6.3`               | Self-contained package type checking.                                                     |
+| `@types/react`              | `devDependencies`  | `^18.3.12`             | React 18 type definitions.                                                                |
+| `@types/react-dom`          | `devDependencies`  | `^18.3.1`              | React DOM 18 type definitions.                                                            |
+| `@types/node`               | `devDependencies`  | `^22.9.0`              | Node.js type definitions.                                                                 |
+| `react`                     | `devDependencies`  | `^18.3.1`              | Required locally only for running isolated Vitest unit tests.                             |
+| `react-dom`                 | `devDependencies`  | `^18.3.1`              | Required locally for Vitest with jsdom.                                                   |
+| `vitest`                    | `devDependencies`  | `^2.1.8`               | Test runner for component unit tests.                                                     |
+| `@testing-library/react`    | `devDependencies`  | `^14.3.1`              | React component test utilities.                                                           |
+| `@testing-library/jest-dom` | `devDependencies`  | `^6.6.3`               | Matchers for DOM node inspection.                                                         |
+| `jsdom`                     | `devDependencies`  | `^25.0.1`              | Headless browser DOM environment for Vitest.                                              |
+| `@vitejs/plugin-react`      | `devDependencies`  | `^4.3.4`               | Vite React plugin for Vitest compilation.                                                 |
+| `@tailwindcss/vite`         | `devDependencies`  | `^4.0.0`               | Tailwind CSS v4 Vite compiler.                                                            |
+| `tailwindcss`               | `devDependencies`  | `^4.0.0`               | Tailwind core.                                                                            |
 
 ---
 

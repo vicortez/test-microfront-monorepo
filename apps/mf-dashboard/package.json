@@ -12,10 +12,12 @@
   },
   "dependencies": {
     "@albert-fe/ui-kit": "*",
+    "@base-ui/react": "^1.9.0",
     "clsx": "^2.1.1",
     "lucide-react": "^1.47.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "shadcn": "^4.22.0",
     "tailwind-merge": "^2.5.4"
   },
   "devDependencies": {

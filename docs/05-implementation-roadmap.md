@@ -59,7 +59,7 @@
      }
      ```
 2. **Install Package Dependencies**:
-   - Runtime: `@base-ui-components/react`, `clsx`, `tailwind-merge`, `class-variance-authority`, `lucide-react`.
+   - Runtime: `@base-ui/react`, `clsx`, `tailwind-merge`, `class-variance-authority`, `lucide-react`.
    - Peer dependencies: `react: ^18.2.0 || ^18.3.0`, `react-dom: ^18.2.0 || ^18.3.0`.
    - Dev dependencies: `typescript`, `@types/react`, `@types/react-dom`, `@types/node`, `vitest`, `jsdom`, `@testing-library/react`, `@testing-library/jest-dom`, `@tailwindcss/vite`, `tailwindcss`.
 3. **Independent Package Configurations**:
@@ -74,7 +74,7 @@
      - `Button.tsx` (using `class-variance-authority`)
      - `Card.tsx` (Card, CardHeader, CardTitle, CardContent)
      - `Badge.tsx`
-     - `Tooltip.tsx` (using `@base-ui-components/react/tooltip`)
+     - `Tooltip.tsx` (using `@base-ui/react/tooltip`)
    - Re-export everything from `src/index.ts`.
    - Author isolated unit & specificity tests (`cn.test.ts`, `Button.test.tsx`).
 
@@ -103,6 +103,14 @@
    - Self-contained `tsconfig.json`, `package.json`, and `vitest.config.ts`.
    - Same `@module-federation/vite` setup exposing `./ChatWidget`.
    - Implement simple `ChatWidget.tsx` displaying a message feed and send input.
+3. **Scaffold Remote 3 (`apps/mf-analytics`) [Vanilla JS Remote]**:
+   - Initialize via `create-vite apps/mf-analytics --template react` (Pure JavaScript, no TypeScript, no Tailwind).
+   - Port: `5003`.
+   - Independent `package.json`, `vite.config.js`, and `vitest.config.js`.
+   - Install React 18, React DOM 18, `@albert-fe/ui-kit` (workspace dependency).
+   - Configure `@module-federation/vite` exposing `./AnalyticsWidget` (`filename: assets/remoteEntry.js`).
+   - Implement `AnalyticsWidget.jsx` importing `<Button>` from `@albert-fe/ui-kit` and using pure Vanilla CSS (`AnalyticsWidget.css`).
+   - Validates that non-Tailwind, non-TypeScript remotes inherit design system styling seamlessly when rendered in the host shell.
 
 ---
 
@@ -114,7 +122,7 @@
    - Self-contained `tsconfig.json`, `package.json`, and `vitest.config.ts`.
    - Dependencies: `react`, `react-dom` (React 18), `react-router-dom` (`^6.28.0`), `@albert-fe/ui-kit`.
 2. **Configure Vite & Module Federation**:
-   - Consumes `mfDashboard` (`http://localhost:5001/assets/remoteEntry.js`) and `mfChat` (`http://localhost:5002/assets/remoteEntry.js`).
+   - Consumes `mfDashboard` (`http://localhost:5001`), `mfChat` (`http://localhost:5002`), and `mfAnalytics` (`http://localhost:5003`).
    - Shared singletons for `react` and `react-dom`.
    - `@src` path alias.
 3. **Configure Tailwind & Styling**:

@@ -1,6 +1,6 @@
 # Architecture & Scope Validation Document
 
-> **Project Goal:** Prototype and validate a modernized frontend architecture for the "Albert" monorepo. This validation project isolates and verifies technical compatibility between **TypeScript**, **React 18**, **react-router-dom v6**, **Vite Module Federation**, **Tailwind CSS v4**, **shadcn/ui patterns**, **Base UI primitives (`@base-ui-components/react`)**, **Oxlint**, **Prettier**, **Vitest**, and **Playwright**.
+> **Project Goal:** Prototype and validate a modernized frontend architecture for the "Albert" monorepo. This validation project isolates and verifies technical compatibility between **TypeScript**, **React 18**, **react-router-dom v6**, **Vite Module Federation**, **Tailwind CSS v4**, **shadcn/ui patterns**, **Base UI primitives (`@base-ui/react`)**, **Oxlint**, **Prettier**, **Vitest**, and **Playwright**.
 
 ---
 
@@ -23,22 +23,22 @@ We validate the following core architectural pillars:
 
 ## 2. Scope Definition: In-Scope vs. Out-of-Scope
 
-| Feature / Domain              | Original Albert Project                                             | Validation Monorepo                                   | Rationale                                                                                                                                             |
-| :---------------------------- | :------------------------------------------------------------------ | :---------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Workspace Architecture**    | Monorepo with independent packages                                  | **Strictly Independent Packages**                     | **No shared config files** (no root `tsconfig.base.json`, etc.). Root has ONLY `package.json`.                                                        |
-| **Language**                  | Plain JavaScript (`.jsx`, `.js`)                                    | **TypeScript (`.tsx`, `.ts`)**                        | Full type-safety with independent `tsconfig.json` per workspace.                                                                                      |
-| **Import Paths**              | Relative paths (`../../cases/...`)                                  | **Absolute Paths (`@src/*`)**                         | Clean, refactor-resilient imports standardized per app.                                                                                               |
-| **UI-Kit Consumption**        | Relative or ad-hoc source imports                                   | **Package-Bound Imports (`@albert-fe/ui-kit`)**       | Treats `ui-kit` as a standalone external dependency with formal `exports`.                                                                            |
-| **CSS Variables**             | Ad-hoc `base.css` + CSS Modules                                     | **UI-Kit as Token Source of Truth**                   | Centralized in `packages/ui-kit/src/styles/tokens.css` and `@theme` mappings.                                                                         |
-| **Linting & Formatting**      | Legacy ESLint config                                                | **Oxlint + Prettier (Root `package.json`)**           | Prettier configured inside root `package.json`; Oxlint run via root script.                                                                           |
-| **Authentication (Keycloak)** | Redirects to `localhost:8000` via Keycloak PKCE client              | **OUT OF SCOPE** (Stubbed / Mocked Auth Context)      | External auth server redirects add zero value to frontend bundling & CSS validation. Replaced with an in-memory/mock session provider.                |
-| **Backend API / BFF**         | Vite proxy to `BFF_TARGET`, real endpoints for cases/permissions    | **OUT OF SCOPE** (In-memory mock data / local stores) | We only need realistic data flows to demonstrate component rendering and state updates.                                                               |
-| **Complex Domain Logic**      | Full Cases management, audit logs, regulatory filings, heavy graphs | **OUT OF SCOPE** (Intentionally simple widgets)       | `mf-dashboard` and `mf-chat` are kept **extremely simple** (no complex charts or external heavy libs). The sole goal is architectural validation.     |
-| **Single Page Multi-MFE**     | Host loads one MFE per route (`/app/causes`, `/app/regulatory`)     | **IN SCOPE (Enhanced)**                               | **Must demonstrate Host + 2 Microfrontends (`mf-dashboard` and `mf-chat`) visible on the SAME page simultaneously**, validating runtime co-existence. |
-| **Module Federation**         | `@module-federation/vite` with React 18 singletons                  | **IN SCOPE**                                          | Core requirement to test runtime script and asset loading.                                                                                            |
-| **Styling Engine**            | CSS Modules + raw CSS custom properties (`base.css`)                | **IN SCOPE (Tailwind v4)**                            | Modernized to **Tailwind CSS v4** via `@tailwindcss/vite`, CSS-first theme configuration, and `@source` scanning.                                     |
-| **Component Primitives**      | Custom built-in HTML/CSS components in `ui-kit`                     | **IN SCOPE**                                          | **shadcn/ui** design patterns built on top of **`@base-ui-components/react`** unstyled primitives.                                                    |
-| **Automated Testing**         | Vitest for units, custom Playwright script for host                 | **IN SCOPE (Enhanced)**                               | Vitest unit tests per workspace + Playwright E2E tests with automated CSS specificity, computed style inspection, and A/B class toggle verification.  |
+| Feature / Domain              | Original Albert Project                                             | Validation Monorepo                                   | Rationale                                                                                                                                                              |
+| :---------------------------- | :------------------------------------------------------------------ | :---------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Workspace Architecture**    | Monorepo with independent packages                                  | **Strictly Independent Packages**                     | **No shared config files** (no root `tsconfig.base.json`, etc.). Root has ONLY `package.json`.                                                                         |
+| **Language**                  | Plain JavaScript (`.jsx`, `.js`)                                    | **TypeScript (`.tsx`, `.ts`)**                        | Full type-safety with independent `tsconfig.json` per workspace.                                                                                                       |
+| **Import Paths**              | Relative paths (`../../cases/...`)                                  | **Absolute Paths (`@src/*`)**                         | Clean, refactor-resilient imports standardized per app.                                                                                                                |
+| **UI-Kit Consumption**        | Relative or ad-hoc source imports                                   | **Package-Bound Imports (`@albert-fe/ui-kit`)**       | Treats `ui-kit` as a standalone external dependency with formal `exports`.                                                                                             |
+| **CSS Variables**             | Ad-hoc `base.css` + CSS Modules                                     | **UI-Kit as Token Source of Truth**                   | Centralized in `packages/ui-kit/src/styles/tokens.css` and `@theme` mappings.                                                                                          |
+| **Linting & Formatting**      | Legacy ESLint config                                                | **Oxlint + Prettier (Root `package.json`)**           | Prettier configured inside root `package.json`; Oxlint run via root script.                                                                                            |
+| **Authentication (Keycloak)** | Redirects to `localhost:8000` via Keycloak PKCE client              | **OUT OF SCOPE** (Stubbed / Mocked Auth Context)      | External auth server redirects add zero value to frontend bundling & CSS validation. Replaced with an in-memory/mock session provider.                                 |
+| **Backend API / BFF**         | Vite proxy to `BFF_TARGET`, real endpoints for cases/permissions    | **OUT OF SCOPE** (In-memory mock data / local stores) | We only need realistic data flows to demonstrate component rendering and state updates.                                                                                |
+| **Complex Domain Logic**      | Full Cases management, audit logs, regulatory filings, heavy graphs | **OUT OF SCOPE** (Intentionally simple widgets)       | Remotes are kept **focused and modular**. The sole goal is architectural validation.                                                                                   |
+| **Single Page Multi-MFE**     | Host loads one MFE per route (`/app/causes`, `/app/regulatory`)     | **IN SCOPE (Enhanced)**                               | **Must demonstrate Host + 3 Microfrontends (`mf-dashboard`, `mf-chat`, and `mf-analytics`) visible on the SAME page simultaneously**, validating runtime co-existence. |
+| **Module Federation**         | `@module-federation/vite` with React 18 singletons                  | **IN SCOPE**                                          | Core requirement to test runtime script and asset loading across TypeScript and vanilla JavaScript remotes.                                                            |
+| **Styling Engine**            | CSS Modules + raw CSS custom properties (`base.css`)                | **IN SCOPE (Tailwind v4 + Vanilla CSS)**              | Modernized to **Tailwind CSS v4** in Host & MFE 1/2, while MFE 3 validates pure Vanilla CSS style inheritance from the shared UI Kit.                                  |
+| **Component Primitives**      | Custom built-in HTML/CSS components in `ui-kit`                     | **IN SCOPE**                                          | **shadcn/ui** design patterns built on top of **`@base-ui/react`** unstyled primitives, installed independently in `ui-kit` and `mf-dashboard`.                        |
+| **Automated Testing**         | Vitest for units, custom Playwright script for host                 | **IN SCOPE (Enhanced)**                               | Vitest unit tests per workspace + Playwright E2E tests with automated CSS specificity, computed style inspection, and A/B class toggle verification.                   |
 
 ---
 
@@ -50,7 +50,7 @@ The monorepo contains **ONLY `package.json` at the root level**. No base tsconfi
 test-microfront-monorepo/
 ├── package.json                   # SOLE COMMON CONFIG: Workspaces, scripts, prettier settings
 ├── packages/
-│   └── ui-kit/                    # Standalone design system (Self-contained)
+│   └── ui-kit/                    # Standalone design system (Self-contained, includes @base-ui/react & shadcn)
 │       ├── package.json           # Formal "exports": { ".": "./src/index.ts", "./styles/*": "./src/styles/*" }
 │       ├── tsconfig.json          # Independent tsconfig (paths: { "@src/*": ["./src/*"] })
 │       ├── vitest.config.ts       # Independent vitest config
@@ -66,19 +66,26 @@ test-microfront-monorepo/
 │   │   ├── vite.config.ts         # Independent vite & Module Federation config
 │   │   ├── vitest.config.ts       # Independent vitest config
 │   │   └── src/
-│   ├── mf-dashboard/              # Remote 1: Simple KPI widget (Port 5001)
+│   ├── mf-dashboard/              # Remote 1: KPI widget with Base UI Tooltip & shadcn (Port 5001)
+│   │   ├── package.json           # Independent dependencies (includes @base-ui/react & shadcn)
+│   │   ├── tsconfig.json          # Independent tsconfig (paths: { "@src/*": ["./src/*"] })
+│   │   ├── vite.config.ts         # Independent vite & Module Federation config
+│   │   ├── vitest.config.ts       # Independent vitest config
+│   │   └── src/
+│   ├── mf-chat/                   # Remote 2: Simple Chat widget (Port 5002)
 │   │   ├── package.json           # Independent dependencies
 │   │   ├── tsconfig.json          # Independent tsconfig (paths: { "@src/*": ["./src/*"] })
 │   │   ├── vite.config.ts         # Independent vite & Module Federation config
 │   │   ├── vitest.config.ts       # Independent vitest config
 │   │   └── src/
-│   └── mf-chat/                   # Remote 2: Simple Chat widget (Port 5002)
-│       ├── package.json           # Independent dependencies
-│       ├── tsconfig.json          # Independent tsconfig (paths: { "@src/*": ["./src/*"] })
-│       ├── vite.config.ts         # Independent vite & Module Federation config
-│       ├── vitest.config.ts       # Independent vitest config
+│   └── mf-analytics/              # Remote 3: Vanilla Remote (Port 5003 - Pure JS, No TS, No Tailwind)
+│       ├── package.json           # Independent dependencies (Pure JS, no TS/Tailwind devDeps)
+│       ├── vite.config.js         # Independent vite.config.js (exposes ./AnalyticsWidget)
+│       ├── vitest.config.js       # Independent vitest.config.js
 │       └── src/
-├── e2e/                           # Root Playwright test suite (CSS verification & multi-MFE integration)
+│           ├── AnalyticsWidget.jsx # Consumes UI Kit <Button> with seamless host style inheritance
+│           └── AnalyticsWidget.css # Pure vanilla CSS
+├── e2e/                           # Root Playwright test suite (Multi-worker parallel E2E verification)
 └── docs/                          # Architecture documentation & validation guides
 ```
 
@@ -101,16 +108,18 @@ test-microfront-monorepo/
 │ │ │ - Navigation Links        │ │                                  │ │ │
 │ │ │ - Theme Mode Switcher     │ │ ┌──────────────────────────────┐ │ │ │
 │ │ │ - Style A/B Test Controls │ │ │ Remote 1: mf-dashboard       │ │ │ │
-│ │ │                           │ │ │ (Loaded from Port 5001)      │ │ │ │
-│ │ │                           │ │ │ - Simple Metric / KPI Cards  │ │ │ │
-│ │ │                           │ │ │ - Base UI Tooltip / Dialog   │ │ │ │
+│ │ │                           │ │ │ (Port 5001 - React + TS + TW)│ │ │ │
 │ │ │                           │ │ └──────────────────────────────┘ │ │ │
 │ │ │                           │ │                                  │ │ │
 │ │ │                           │ │ ┌──────────────────────────────┐ │ │ │
 │ │ │                           │ │ │ Remote 2: mf-chat            │ │ │ │
-│ │ │                           │ │ │ (Loaded from Port 5002)      │ │ │ │
-│ │ │                           │ │ │ - Simple Message Feed        │ │ │ │
-│ │ │                           │ │ │ - Base UI Popover / Input    │ │ │ │
+│ │ │                           │ │ │ (Port 5002 - React + TS + TW)│ │ │ │
+│ │ │                           │ │ └──────────────────────────────┘ │ │ │
+│ │ │                           │ │                                  │ │ │
+│ │ │                           │ │ ┌──────────────────────────────┐ │ │ │
+│ │ │                           │ │ │ Remote 3: mf-analytics       │ │ │ │
+│ │ │                           │ │ │ (Port 5003 - Pure JS, No TW) │ │ │ │
+│ │ │                           │ │ │ - Imports UI Kit <Button>    │ │ │ │
 │ │ │                           │ │ └──────────────────────────────┘ │ │ │
 │ │ └───────────────────────────┘ └──────────────────────────────────┘ │ │
 │ └────────────────────────────────────────────────────────────────────┘ │
