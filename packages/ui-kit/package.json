@@ -12,7 +12,7 @@
       "import": "./dist/index.js",
       "default": "./dist/index.js"
     },
-    "./styles/ui-kit.css": "./dist/ui-kit.css",
+    "./styles/ui-kit.css": "./src/styles/ui-kit.css",
     "./styles/preflight.css": "./dist/preflight.css",
     "./ui-kit.css": "./dist/ui-kit.css",
     "./preflight.css": "./dist/preflight.css",
