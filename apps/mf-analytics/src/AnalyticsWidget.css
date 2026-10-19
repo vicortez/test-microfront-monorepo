@@ -63,7 +63,8 @@
 .analytics-label {
   font-size: 0.75rem;
   font-weight: 500;
-  color: hsl(var(--muted-foreground));
+  /* color: hsl(var(--muted-foreground)); */
+  color: var(--color-albert-coolgreen);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 0.25rem;
