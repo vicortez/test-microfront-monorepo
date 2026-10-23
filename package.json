@@ -4,6 +4,7 @@
   "description": "",
   "scripts": {
     "dev": "concurrently -k -p \"[{name}]\" -n \"host,dashboard,chat,analytics\" -c \"cyan,magenta,yellow,blue\" \"npm run dev -w apps/host\" \"npm run dev -w apps/mf-dashboard\" \"npm run dev -w apps/mf-chat\" \"npm run dev -w apps/mf-analytics\"",
+    "serve:dist": "concurrently -k -p \"[{name}]\" -n \"host,dashboard,chat,analytics\" -c \"cyan,magenta,yellow,blue\" \"npx http-server apps/host/dist -p 5000 --cors -c-1 --proxy http://localhost:5000?\" \"npx http-server apps/mf-dashboard/dist -p 5001 --cors -c-1\" \"npx http-server apps/mf-chat/dist -p 5002 --cors -c-1\" \"npx http-server apps/mf-analytics/dist -p 5003 --cors -c-1\"",
     "build": "npm run build --workspaces",
     "test": "npm run test --workspaces",
     "typecheck": "npm run typecheck --workspaces",

@@ -40,6 +40,7 @@ export default defineConfig({
         remoteHmr: true,
       },
       filename: 'assets/remoteEntry.js',
+      bundleAllCSS: true,
       exposes: {
         './ChatWidget': './src/ChatWidget.tsx',
       },

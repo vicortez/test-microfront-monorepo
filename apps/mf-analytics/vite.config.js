@@ -32,6 +32,7 @@ export default defineConfig({
         remoteHmr: true,
       },
       filename: 'assets/remoteEntry.js',
+      bundleAllCSS: true,
       exposes: {
         './AnalyticsWidget': './src/AnalyticsWidget.jsx',
       },
