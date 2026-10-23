@@ -1,9 +1,11 @@
-@import 'tailwindcss';
-@import '@albert-fe/ui-kit/styles/tokens.css';
-@import '@albert-fe/ui-kit/styles/theme.css';
+@layer theme, base, utilities;
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/preflight.css' layer(base);
+@import 'tailwindcss/utilities.css' layer(utilities);
 
-/* Explicitly scan workspace UI Kit source */
-@source "../../../packages/ui-kit/src";
+@import '@albert-fe/ui-kit/styles/tailwind-config.css';
+@import '@albert-fe/ui-kit/styles/albert-tokens.css';
+@import '@albert-fe/ui-kit/styles/shadcn-tokens.css';
 
 html,
 body,

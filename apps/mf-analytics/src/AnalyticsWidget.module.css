@@ -1,6 +1,7 @@
-/* Pure Vanilla CSS - No Tailwind */
-@import '@albert-fe/ui-kit/styles/ui-kit.css';
-.analytics-container {
+@layer theme, base, utilities;
+
+/* Pure Vanilla CSS Module - No Tailwind */
+.analyticsContainer {
   border-radius: var(--radius, 12px);
   border: 1px solid hsl(var(--border));
   background-color: hsl(var(--card));
@@ -11,7 +12,7 @@
     0 1px 2px -1px rgba(0, 0, 0, 0.1);
 }
 
-.analytics-header {
+.analyticsHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -20,7 +21,7 @@
   border-bottom: 1px solid hsl(var(--border));
 }
 
-.analytics-title-group h2 {
+.analyticsTitleGroup h2 {
   font-size: 1.125rem;
   font-weight: 600;
   margin: 0;
@@ -28,13 +29,13 @@
   color: hsl(var(--foreground));
 }
 
-.analytics-title-group p {
+.analyticsTitleGroup p {
   font-size: 0.8125rem;
   color: hsl(var(--muted-foreground));
   margin: 0.25rem 0 0 0;
 }
 
-.analytics-badge-tag {
+.analyticsBadgeTag {
   display: inline-flex;
   align-items: center;
   padding: 0.25rem 0.625rem;
@@ -43,24 +44,25 @@
   border-radius: 9999px;
   background-color: #fef3c7;
   color: #92400e;
+  /* color: blue; */
   border: 1px solid #fde68a;
 }
 
-.analytics-grid {
+.analyticsGrid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
   margin-bottom: 1.25rem;
 }
 
-.analytics-card {
+.analyticsCard {
   border: 1px solid hsl(var(--border));
   border-radius: 8px;
   padding: 0.875rem 1rem;
   background: rgba(0, 0, 0, 0.02);
 }
 
-.analytics-label {
+.analyticsLabel {
   font-size: 0.75rem;
   font-weight: 500;
   /* color: hsl(var(--muted-foreground)); */
@@ -70,20 +72,20 @@
   margin-bottom: 0.25rem;
 }
 
-.analytics-value {
+.analyticsValue {
   font-size: 1.5rem;
   font-weight: 700;
   color: hsl(var(--foreground));
   margin: 0;
 }
 
-.analytics-change {
+.analyticsChange {
   font-size: 0.6875rem;
   color: #059669;
   margin-top: 0.25rem;
 }
 
-.analytics-footer {
+.analyticsFooter {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -91,7 +93,7 @@
   border-top: 1px solid hsl(var(--border));
 }
 
-.analytics-btn-group {
+.analyticsBtnGroup {
   display: flex;
   gap: 0.5rem;
 }

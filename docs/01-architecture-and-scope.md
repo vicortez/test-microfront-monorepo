@@ -14,7 +14,7 @@ We validate the following core architectural pillars:
 2. **Full TypeScript Coverage**: All packages and apps are written in TypeScript (`.ts`, `.tsx`), with self-contained, strict compiler configurations in each workspace.
 3. **Standard Absolute Imports**: All internal source references use `@src/*` mapped to `./src/*` within that specific app or package (e.g. `@src/cases/usecases` or `@src/components/Widget`), eliminating relative path traversal (`../../..`).
 4. **Clean Package Boundary Consumption**: Consuming apps import `@albert-fe/ui-kit` as if it were a separate published npm library (via package `exports` map and npm workspace resolution), rather than direct relative file path traversal.
-5. **UI-Kit as Single Source of Truth for CSS Variables**: All design tokens (HSL variables for light/dark theme, border-radius, font metrics) originate exclusively in `packages/ui-kit/src/styles/tokens.css`.
+5. **UI-Kit as Single Source of Truth for CSS Variables**: All design tokens and shared Tailwind configurations originate exclusively in `packages/ui-kit/src/styles/albert-tokens.css` (Albert team custom properties), `packages/ui-kit/src/styles/shadcn-tokens.css` (shadcn/ui & Base UI variables and Tailwind v4 `@theme` mappings), and `packages/ui-kit/src/styles/tailwind-config.css` (pure Tailwind v4 configuration and `@source` component scanning).
 6. **Modern Tooling & Formatting**: **Oxlint** for ultra-fast linting, and **Prettier** configured directly in root `package.json` with `{ "singleQuote": true, "semi": false }`.
 7. **Concurrent Multi-MFE Single-Page Co-existence**: Host shell running two remotes (`mf-dashboard` and `mf-chat`) simultaneously in the same viewport.
 8. **Tailwind CSS v4 Integration**: Zero-config `@tailwindcss/vite` in each app with `@source` package scanning and cascade-safe resets.
@@ -29,7 +29,7 @@ We validate the following core architectural pillars:
 | **Language**                  | Plain JavaScript (`.jsx`, `.js`)                                    | **TypeScript (`.tsx`, `.ts`)**                        | Full type-safety with independent `tsconfig.json` per workspace.                                                                                                       |
 | **Import Paths**              | Relative paths (`../../cases/...`)                                  | **Absolute Paths (`@src/*`)**                         | Clean, refactor-resilient imports standardized per app.                                                                                                                |
 | **UI-Kit Consumption**        | Relative or ad-hoc source imports                                   | **Package-Bound Imports (`@albert-fe/ui-kit`)**       | Treats `ui-kit` as a standalone external dependency with formal `exports`.                                                                                             |
-| **CSS Variables**             | Ad-hoc `base.css` + CSS Modules                                     | **UI-Kit as Token Source of Truth**                   | Centralized in `packages/ui-kit/src/styles/tokens.css` and `@theme` mappings.                                                                                          |
+| **CSS Variables**             | Ad-hoc `base.css` + CSS Modules                                     | **UI-Kit as Token Source of Truth**                   | Centralized in `packages/ui-kit/src/styles/albert-tokens.css` and `shadcn-tokens.css`.                                                                                 |
 | **Linting & Formatting**      | Legacy ESLint config                                                | **Oxlint + Prettier (Root `package.json`)**           | Prettier configured inside root `package.json`; Oxlint run via root script.                                                                                            |
 | **Authentication (Keycloak)** | Redirects to `localhost:8000` via Keycloak PKCE client              | **OUT OF SCOPE** (Stubbed / Mocked Auth Context)      | External auth server redirects add zero value to frontend bundling & CSS validation. Replaced with an in-memory/mock session provider.                                 |
 | **Backend API / BFF**         | Vite proxy to `BFF_TARGET`, real endpoints for cases/permissions    | **OUT OF SCOPE** (In-memory mock data / local stores) | We only need realistic data flows to demonstrate component rendering and state updates.                                                                                |
@@ -57,8 +57,9 @@ test-microfront-monorepo/
 │       └── src/
 │           ├── index.ts           # Public library barrel
 │           └── styles/
-│               ├── tokens.css     # SOURCE OF TRUTH for all CSS variables
-│               └── theme.css      # Tailwind v4 @theme bridge
+│               ├── albert-tokens.css   # Albert team custom CSS properties
+│               ├── shadcn-tokens.css   # shadcn & Base UI variables & @theme bridge
+│               └── tailwind-config.css # Pure Tailwind v4 config (@source scanning)
 ├── apps/
 │   ├── host/                      # Application Shell (Port 5000)
 │   │   ├── package.json           # Independent dependencies
@@ -83,8 +84,8 @@ test-microfront-monorepo/
 │       ├── vite.config.js         # Independent vite.config.js (exposes ./AnalyticsWidget)
 │       ├── vitest.config.js       # Independent vitest.config.js
 │       └── src/
-│           ├── AnalyticsWidget.jsx # Consumes UI Kit <Button> with seamless host style inheritance
-│           └── AnalyticsWidget.css # Pure vanilla CSS
+│           ├── AnalyticsWidget.jsx        # Consumes UI Kit <Button> with seamless host style inheritance
+│           └── AnalyticsWidget.module.css # Pure vanilla CSS Module
 ├── e2e/                           # Root Playwright test suite (Multi-worker parallel E2E verification)
 └── docs/                          # Architecture documentation & validation guides
 ```
@@ -140,6 +141,6 @@ test-microfront-monorepo/
 3. **Absolute Imports**:
    - Every workspace independently configures `paths: { "@src/*": ["./src/*"] }` in its own `tsconfig.json` and `resolve.alias: { '@src': path.resolve(__dirname, './src') }` in its `vite.config.ts`.
 4. **Package Boundary Isolation**:
-   - Apps import components as `import { Button } from '@albert-fe/ui-kit'` and CSS as `import '@albert-fe/ui-kit/styles/tokens.css'`.
+   - Apps import components as `import { Button } from '@albert-fe/ui-kit'` and CSS as `@import '@albert-fe/ui-kit/styles/albert-tokens.css'` and `@import '@albert-fe/ui-kit/styles/shadcn-tokens.css'`.
 5. **UI-Kit as Token Source of Truth**:
    - All `--primary`, `--background`, `--foreground`, `--radius`, and semantic tokens are defined exclusively in `packages/ui-kit`. Apps never declare independent conflicting root CSS variables.

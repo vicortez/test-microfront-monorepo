@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "dev": "concurrently -k -p \"[{name}]\" -n \"ui-kit,host,dashboard,chat,analytics\" -c \"green,cyan,magenta,yellow,blue\" \"npm run dev -w packages/ui-kit\" \"npm run dev -w apps/host\" \"npm run dev -w apps/mf-dashboard\" \"npm run dev -w apps/mf-chat\" \"npm run dev -w apps/mf-analytics\"",
-    "dev:apps": "concurrently -k -p \"[{name}]\" -n \"host,dashboard,chat,analytics\" -c \"cyan,magenta,yellow,blue\" \"npm run dev -w apps/host\" \"npm run dev -w apps/mf-dashboard\" \"npm run dev -w apps/mf-chat\" \"npm run dev -w apps/mf-analytics\"",
+    "dev": "concurrently -k -p \"[{name}]\" -n \"host,dashboard,chat,analytics\" -c \"cyan,magenta,yellow,blue\" \"npm run dev -w apps/host\" \"npm run dev -w apps/mf-dashboard\" \"npm run dev -w apps/mf-chat\" \"npm run dev -w apps/mf-analytics\"",
     "build": "npm run build --workspaces",
     "test": "npm run test --workspaces",
     "typecheck": "npm run typecheck --workspaces",

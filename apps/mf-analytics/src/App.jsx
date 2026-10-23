@@ -1,6 +1,5 @@
 import React from 'react'
 import AnalyticsWidget from './AnalyticsWidget'
-import './index.css'
 
 export default function App() {
   return (

@@ -1,3 +1,6 @@
+/*
+ * CSS variables and Tailwind v4 @theme mappings required by shadcn/ui and Base UI components.
+ */
 :root {
   --background: 0 0% 100%;
   --foreground: 222.2 84% 4.9%;
@@ -19,7 +22,6 @@
   --input: 214.3 31.8% 91.4%;
   --ring: 221.2 83.2% 53.3%;
   --radius: 0.5rem;
-  --color-albert-coolgreen: #e802c6;
 }
 
 .dark {
@@ -55,4 +57,36 @@
   --primary: 271 81% 56%;
   --primary-foreground: 210 40% 98%;
   --ring: 271 81% 56%;
+}
+
+/*
+ * `inline` makes utilities emit `hsl(var(--primary))` directly instead of
+ * referencing a :root-resolved `--color-primary`. Without it, overriding
+ * `--primary` on a wrapper (e.g. `.theme-emerald`) does not recolor
+ * descendants, because the color was already computed at :root.
+ */
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
 }

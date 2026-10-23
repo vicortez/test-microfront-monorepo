@@ -1,8 +1,0 @@
-@layer theme, base, components, utilities;
-
-/*
- * Reset for STANDALONE app shells that don't run Tailwind.
- * Never import this from an exposed MF module: the host owns the page reset.
- * (Reset needs to happen for shadcn components to look right)
- */
-@import 'tailwindcss/preflight.css' layer(base);

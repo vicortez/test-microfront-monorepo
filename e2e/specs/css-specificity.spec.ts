@@ -61,3 +61,28 @@ test('CSS specificity and design tokens are computed accurately across MFE bound
   expect(aBtnComputed.backgroundColor).toBeTruthy()
   expect(aBtnComputed.display).toContain('flex')
 })
+
+test('MFE-specific Tailwind utility classes (bg-amber-400 in mf-dashboard) are applied when running inside host', async ({
+  page,
+}) => {
+  await page.goto('/')
+
+  const badge = page.locator('[data-testid="dashboard-mfe-badge"]')
+  await expect(badge).toBeVisible()
+
+  const { badgeBg, expectedAmber400 } = await badge.evaluate((el) => {
+    const probe = document.createElement('div')
+    probe.style.backgroundColor = 'var(--color-amber-400)'
+    document.body.appendChild(probe)
+    const expected = window.getComputedStyle(probe).backgroundColor
+    probe.remove()
+
+    return {
+      badgeBg: window.getComputedStyle(el).backgroundColor,
+      expectedAmber400: expected,
+    }
+  })
+
+  expect(badgeBg).not.toBe('rgba(0, 0, 0, 0)')
+  expect(badgeBg).toBe(expectedAmber400)
+})

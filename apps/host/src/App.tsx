@@ -5,6 +5,7 @@ import {
   RemoteErrorBoundary,
   RemoteLoadingFallback,
 } from './components/RemoteBoundary'
+import styles from './App.module.css'
 
 // Lazy load remote microfrontends via Module Federation
 const DashboardWidget = React.lazy(() => import('mfDashboard/DashboardWidget'))
@@ -16,7 +17,7 @@ export default function App() {
 
   return (
     <div
-      className={`min-h-screen flex flex-col ${theme === 'default' ? '' : theme}`}
+      className={`${styles.appShell} min-h-screen flex flex-col ${theme === 'default' ? '' : theme}`}
     >
       <Header />
       <div className="flex-1 flex overflow-hidden">
@@ -26,7 +27,7 @@ export default function App() {
           <div className="max-w-7xl mx-auto space-y-8">
             <div className="flex flex-col md:flex-row md:items-center justify-between pb-2 border-b border-border">
               <div>
-                <h2 className="text-2xl font-bold tracking-tight text-foreground">
+                <h2 className="text-2xl font-bold tracking-tight text-foreground bg-amber-600">
                   Operations Command Center
                 </h2>
                 <p className="text-sm text-muted-foreground mt-0.5">

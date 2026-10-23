@@ -9,6 +9,7 @@ import {
   Tooltip,
 } from '@albert-fe/ui-kit'
 import { Activity, TrendingUp, Users, RefreshCw } from 'lucide-react'
+import './widget.css'
 
 export interface DashboardWidgetProps {
   onRefresh?: () => void
@@ -46,7 +47,13 @@ export default function DashboardWidget({ onRefresh }: DashboardWidgetProps) {
           </p>
         </div>
         <div className="flex items-center space-x-2">
-          <Badge variant="secondary">Remote 1 (MF)</Badge>
+          <Badge
+            data-testid="dashboard-mfe-badge"
+            variant="secondary"
+            className="bg-amber-400"
+          >
+            Remote 1 (MF)
+          </Badge>
           <Tooltip content="Refresh live operational metrics">
             <Button
               variant="outline"
@@ -62,7 +69,11 @@ export default function DashboardWidget({ onRefresh }: DashboardWidgetProps) {
 
       <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* KPI Card 1 */}
-        <Card data-testid="dashboard-kpi-card" className="border-border">
+        {/* <Card data-testid="dashboard-kpi-card" className="border-border bg-amber-600"> */}
+        <Card
+          data-testid="dashboard-kpi-card"
+          className="border-border bg-amber-400"
+        >
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Active Cases

@@ -45,7 +45,6 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         ref={ref}
-        data-ui-kit-hmr="live-updated"
         className={cn(buttonVariants({ variant, size, className }))}
         onClick={handleClick}
         {...props}

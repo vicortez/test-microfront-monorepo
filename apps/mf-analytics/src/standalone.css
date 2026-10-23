@@ -1,4 +1,4 @@
-@import '@albert-fe/ui-kit/styles/ui-kit.css';
+@layer theme, base, utilities;
 
 html,
 body,

@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { Badge, Button } from '@albert-fe/ui-kit'
 import { MessageSquare, Send } from 'lucide-react'
+import './widget.css'
 
 export interface ChatMessage {
   id: string
@@ -51,6 +52,7 @@ export default function ChatWidget() {
     <section
       id="mfe-chat"
       data-testid="mfe-chat-root"
+      // className="rounded-xl border border-border bg-card p-6"
       className="rounded-xl border border-border bg-card p-6 shadow-sm"
     >
       <div className="flex items-center justify-between pb-4 border-b border-border">

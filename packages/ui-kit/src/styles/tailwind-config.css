@@ -1,0 +1,8 @@
+/*
+ * Tailwind v4 configuration for @albert-fe/ui-kit (source scanning, etc.),
+ * independent of shadcn/ui.
+ */
+@source '../components';
+@source '../utils';
+@source not '../**/*.test.tsx';
+@source not '../**/*.test.ts';

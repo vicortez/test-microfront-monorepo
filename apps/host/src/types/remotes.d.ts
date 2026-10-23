@@ -1,3 +1,5 @@
+/// <reference types="vite/client" />
+
 declare module 'mfDashboard/DashboardWidget' {
   import * as React from 'react'
   export interface DashboardWidgetProps {
