@@ -89,7 +89,7 @@ Self-contained design system package.
 | `tailwind-merge`            | `dependencies`     | `^2.5.4`               | Intelligently merges Tailwind CSS classes without style conflicts.                        |
 | `class-variance-authority`  | `dependencies`     | `^0.7.1`               | Manages variant-based styling (e.g. button sizes, colors) in shadcn pattern.              |
 | `lucide-react`              | `dependencies`     | `^1.47.0`              | Consistent UI icon set.                                                                   |
-| `typescript`                | `devDependencies`  | `^5.6.3`               | Self-contained package type checking.                                                     |
+| `typescript`                | `devDependencies`  | `~6.0.3`               | Self-contained package type checking.                                                     |
 | `@types/react`              | `devDependencies`  | `^18.3.12`             | React 18 type definitions.                                                                |
 | `@types/react-dom`          | `devDependencies`  | `^18.3.1`              | React DOM 18 type definitions.                                                            |
 | `@types/node`               | `devDependencies`  | `^22.9.0`              | Node.js type definitions.                                                                 |
@@ -118,7 +118,7 @@ The Application Shell that mounts the navigation layout, providers, and Module F
 | `clsx`                    | `dependencies`    | `^2.1.1`   | Runtime class composition.                                         |
 | `tailwind-merge`          | `dependencies`    | `^2.5.4`   | Runtime Tailwind class resolution.                                 |
 | `lucide-react`            | `dependencies`    | `^1.47.0`  | Shell navigation icons.                                            |
-| `typescript`              | `devDependencies` | `^5.6.3`   | App type checking.                                                 |
+| `typescript`              | `devDependencies` | `~6.0.3`   | App type checking.                                                 |
 | `@types/react`            | `devDependencies` | `^18.3.12` | React types.                                                       |
 | `@types/react-dom`        | `devDependencies` | `^18.3.1`  | React DOM types.                                                   |
 | `@types/node`             | `devDependencies` | `^22.9.0`  | Node types for path aliases.                                       |
@@ -145,7 +145,7 @@ Independently buildable, extremely lightweight microfrontends exposing widgets t
 | `clsx`                    | `dependencies`    | `^2.1.1`   | Class composition.                                            |
 | `tailwind-merge`          | `dependencies`    | `^2.5.4`   | Tailwind merge utility.                                       |
 | `lucide-react`            | `dependencies`    | `^1.47.0`  | Simple widget icons.                                          |
-| `typescript`              | `devDependencies` | `^5.6.3`   | App type checking.                                            |
+| `typescript`              | `devDependencies` | `~6.0.3`   | App type checking.                                            |
 | `@types/react`            | `devDependencies` | `^18.3.12` | React types.                                                  |
 | `@types/react-dom`        | `devDependencies` | `^18.3.1`  | React DOM types.                                              |
 | `@types/node`             | `devDependencies` | `^22.9.0`  | Node types for path aliases.                                  |
@@ -174,7 +174,6 @@ Example: `apps/host/tsconfig.json` (and similarly for `mf-dashboard`, `mf-chat`,
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "allowJs": false,
     "skipLibCheck": true,
-    "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
@@ -184,7 +183,6 @@ Example: `apps/host/tsconfig.json` (and similarly for `mf-dashboard`, `mf-chat`,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "baseUrl": ".",
     "paths": {
       "@src/*": ["./src/*"]
     }
